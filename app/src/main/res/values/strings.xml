@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PopularMovie-New-Tray</string>
+    <string name="Popular_Sort">Popular Movies</string>
+    <string name="TopReated_Sort">Top Reated Movies</string>
+    <string name="favorites">Favorites</string>
+
+</resources>
