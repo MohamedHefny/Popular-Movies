@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout
-
+<fragment
+    android:name="com.example.mohamedhefny.popularmovie_new_tray.MainActivityFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.mohamedhefny.popularmovie_new_tray.MainActivity"
-    android:id="@+id/container"
+    android:id="@+id/fragment"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    />
+    tools:layout="@layout/main_posters_fragment">
+
+</fragment>

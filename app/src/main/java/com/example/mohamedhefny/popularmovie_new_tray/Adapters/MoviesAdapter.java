@@ -1,6 +1,7 @@
 package com.example.mohamedhefny.popularmovie_new_tray.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class MoviesAdapter extends BaseAdapter {
 
-    public static final String posterURL = "http://image.tmbd.org/t/p/w185";
+    public static final String posterURL = "http://image.tmdb.org/t/p/w185";
 
     private List<MovieModel> movieList;
     private Context context;
@@ -60,13 +61,13 @@ public class MoviesAdapter extends BaseAdapter {
         }
 
         MovieModel movieModel = getItem(position);
-        if(movieModel.getIsFav() == 0){
+//        if(movieModel.getIsFav() == 0){
             String posterPath = posterURL + movieModel.getPosterPath();
-
+            Log.i("poster",posterPath);
             Picasso.with(context).load(posterPath).into(holder.posterImageView);
-        }else {
-
-        }
+//        }else {
+//
+//        }
 
         return convertView;
     }

@@ -1,5 +1,7 @@
 package com.example.mohamedhefny.popularmovie_new_tray;
 
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +15,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
 import com.example.mohamedhefny.popularmovie_new_tray.Adapters.MoviesAdapter;
+import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,6 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     static final String sort_Popular = "popular";
     static final String sort_Top_Rated = "top_rated";
     static final String API_Kay = "api_key";
-    static final String API_Value = "3b7f55cfc517563495641cc3d5ed4285";
 
     //Final MovieModel URL
     String PopularMoveisURL ;
@@ -45,6 +46,11 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
 
     GridView gridView;
     String sortMode;
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.app_main_menu, menu);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,18 +66,21 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
         setHasOptionsMenu(true);
 
         //Popular MovieModel URL Build
-        Uri popularMoviesURL = Uri.parse(movies_URL).buildUpon().appendPath(sort_Popular).appendQueryParameter(API_Kay,API_Value).build();
+        Uri popularMoviesURL = Uri.parse(movies_URL).buildUpon().appendPath(sort_Popular)
+                .appendQueryParameter(API_Kay,getString(R.string.myApiKeyValue)).build();
         PopularMoveisURL = popularMoviesURL.toString();
 
         //Top_Rated MovieModel URL Build
-        Uri topRatedMoviesURL = Uri.parse(movies_URL).buildUpon().appendPath(sort_Top_Rated).appendQueryParameter(API_Kay,API_Value).build();
+        Uri topRatedMoviesURL = Uri.parse(movies_URL).buildUpon().appendPath(sort_Top_Rated)
+                .appendQueryParameter(API_Kay,getString(R.string.myApiKeyValue)).build();
         TopRatedMoviesURL = topRatedMoviesURL.toString();
 
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.app_main_menu, menu);
+    public void onStart() {
+        super.onStart();
+        updateData(PopularMoveisURL);
     }
 
     @Override
@@ -88,27 +97,19 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateData(PopularMoveisURL);
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        MovieModel movie = (MovieModel) parent.getItemAtPosition(position);
-        ((Callback) getActivity()).onItemSelected(movie);
+        MovieModel movieModel = (MovieModel) parent.getItemAtPosition(position);
+        ((Callback) getActivity()).onItemSelected(movieModel);
     }
 
     void updateData(String DataURL){
-        FetchMoviesData updateMovies = new FetchMoviesData();
-        updateMovies.execute(DataURL);
+        FetchMoviesData fetchMoviesData = new FetchMoviesData();
+        fetchMoviesData.execute(DataURL);
 
     }
 
     //************************************************************************************************************************//
     public class FetchMoviesData extends AsyncTask<String , Void , List<MovieModel>> {
-
-        private final String LOG_TAG = FetchMoviesData.class.getSimpleName();
 
         private String moviesJSONData;
 
