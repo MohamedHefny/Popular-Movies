@@ -3,21 +3,34 @@ package com.example.mohamedhefny.popularmovie_new_tray.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import ckm.simple.sql_provider.annotation.SimpleSQLColumn;
+import ckm.simple.sql_provider.annotation.SimpleSQLTable;
+
 /**
  * Created by Mohamed Hefny on 02/04/2016.
  */
+@SimpleSQLTable(table = "MoviesTable", provider = "MovieProvider")
+
 public class MovieModel implements Parcelable{
 
+    @SimpleSQLColumn(value = "col_id")
     private int id;
+    @SimpleSQLColumn(value = "col_movieId")
     private String movieId;
+    @SimpleSQLColumn(value = "col_posterPath")
     private String posterPath;
+    @SimpleSQLColumn(value = "col_title")
     private String title;
+    @SimpleSQLColumn(value = "col_releaseDate")
     private String releaseDate;
+    @SimpleSQLColumn(value = "col_overview")
     private String overview;
+    @SimpleSQLColumn(value = "col_voteAverage")
     private String voteAverage;
+    @SimpleSQLColumn(value = "col_isFav")
     private int isFav;
 
-    //Getter For Variables *************************
+    //Setter and Getter For Variables *************************
     public int getIsFav() {
         return isFav;
     }
@@ -50,8 +63,34 @@ public class MovieModel implements Parcelable{
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int id) {this.id = id;}
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public void setIsFav(int isFav) {
+        this.isFav = isFav;
     }
     //******************************************************************
 
@@ -66,14 +105,6 @@ public class MovieModel implements Parcelable{
         this.posterPath = posterPath;
         this.isFav = isFav;
     }
-
-    public MovieModel(String movieId, String title, String posterPath, int isFav) {
-        this.movieId = movieId;
-        this.title = title;
-        this.posterPath = posterPath;
-        this.isFav = isFav;
-    }
-
 
     protected MovieModel(Parcel in) {
         id = in.readInt();

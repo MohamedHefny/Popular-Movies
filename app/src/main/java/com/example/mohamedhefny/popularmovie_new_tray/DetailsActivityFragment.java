@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mohamedhefny.popularmovie_new_tray.Adapters.MoviesAdapter;
 import com.example.mohamedhefny.popularmovie_new_tray.Adapters.ReviewAdapter;
@@ -28,6 +29,8 @@ import com.example.mohamedhefny.popularmovie_new_tray.Model.ReviewModel;
 import com.example.mohamedhefny.popularmovie_new_tray.Model.TrailerModel;
 import com.linearlistview.LinearListView;
 import com.squareup.picasso.Picasso;
+
+import junit.framework.Test;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.mohamedhefny.popularmovie_new_tray.Model.*;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -72,7 +76,7 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
 
     private ShareActionProvider mShareActionProvider;
 
-    private Button toggleBtn;
+    private Button favoriteBtn;
 
     public DetailsActivityFragment() {}
 
@@ -126,8 +130,8 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         reviewAdapter = new ReviewAdapter(getActivity(), new ArrayList<ReviewModel>());
         reviewListView.setAdapter(reviewAdapter);
 
-        toggleBtn = (Button) rootView.findViewById(R.id.toggle);
-        toggleBtn.setOnClickListener(this);
+        favoriteBtn = (Button) rootView.findViewById(R.id.favoriteBtn);
+        favoriteBtn.setOnClickListener(this);
 
         if(toolbar != null){
             //Do this In One Pane Mode
@@ -143,8 +147,7 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         if(movieModel.getIsFav() == 0){
             posterPath = MoviesAdapter.posterURL + movieModel.getPosterPath();
             Picasso.with(getActivity()).load(posterPath).fit().into(posterImage);
-            //toggleBtn.setChecked(false);
-        }else{}
+        }else if (movieModel.getIsFav() == 1){}
 
         posterTitle.setText(movieModel.getTitle());
         release_date.append(" " +movieModel.getReleaseDate());
@@ -155,6 +158,18 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
             new FetchTrailersData().execute(movieModel.getMovieId());
             new FetchReviewsData().execute(movieModel.getMovieId());
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(movieModel.getIsFav() == 0){
+            Toast.makeText(getContext(),"Movie Add To Favorite",Toast.LENGTH_SHORT).show();
+            movieModel.setIsFav(1);
+            favoriteBtn.setClickable(false);
+            MovieModel mov = new MovieModel();
+            getActivity().getContentResolver().insert(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(mov,false));
+        }
+        else {}
     }
 
     private Intent createShareMovieIntent() {
@@ -362,9 +377,4 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         }
     }
     //************************************************************************************************************************//
-
-    @Override
-    public void onClick(View v) {
-
-    }
 }

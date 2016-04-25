@@ -17,6 +17,7 @@ import android.widget.GridView;
 
 import com.example.mohamedhefny.popularmovie_new_tray.Adapters.MoviesAdapter;
 import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
+import com.example.mohamedhefny.popularmovie_new_tray.Model.MoviesTableTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +92,21 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
         }
         else if(id == R.id.action_top_sort) {
             updateData(TopRatedMoviesURL);
+        }
+        else if(id == R.id.action_favorites){
+            Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
+            List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
+
+            MoviesAdapter adapter = new MoviesAdapter(getActivity() , MoviesRows);
+
+            if(MoviesRows != null){
+                if(adapter.isEmpty()){
+                    gridView.setAdapter(adapter);
+                }else {
+                    gridView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,6 +1,7 @@
 package com.example.mohamedhefny.popularmovie_new_tray.Adapters;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
 import com.example.mohamedhefny.popularmovie_new_tray.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -61,13 +64,12 @@ public class MoviesAdapter extends BaseAdapter {
         }
 
         MovieModel movieModel = getItem(position);
-//        if(movieModel.getIsFav() == 0){
+        if(movieModel.getIsFav() == 0){
             String posterPath = posterURL + movieModel.getPosterPath();
-            Log.i("poster",posterPath);
             Picasso.with(context).load(posterPath).into(holder.posterImageView);
-//        }else {
-//
-//        }
+        }else {
+            //
+        }
 
         return convertView;
     }

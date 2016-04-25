@@ -22,6 +22,11 @@
             android:label="@string/title_activity_details"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <provider
+            android:authorities="com.example.mohamedhefny.popularmovie_new_tray.provider.authority"
+            android:name=".DataBase.MovieProvider">
+
+        </provider>
     </application>
 
 </manifest>
