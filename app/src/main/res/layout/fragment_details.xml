@@ -52,7 +52,6 @@
                     android:gravity="center"
                     android:paddingTop="6dp"
                     android:paddingBottom="10dp"
-                    android:text="@string/released_on"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"/>
 
@@ -64,7 +63,6 @@
                     android:gravity="center"
                     android:paddingTop="6dp"
                     android:paddingBottom="10dp"
-                    android:text="@string/vote_avrage"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"/>
 

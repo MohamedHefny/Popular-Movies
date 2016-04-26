@@ -10,28 +10,17 @@ import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
     private boolean mTwoPane;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         if(findViewById(R.id.detail_container) != null){
             mTwoPane = true;
-            if(savedInstanceState == null){
-               // getSupportFragmentManager().beginTransaction().replace(R.id.detail_container, new DetailsActivityFragment()).commit();
-            }
         }else {
             mTwoPane = false;
         }
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override

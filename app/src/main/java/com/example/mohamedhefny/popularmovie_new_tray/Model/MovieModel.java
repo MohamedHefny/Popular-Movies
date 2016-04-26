@@ -27,13 +27,8 @@ public class MovieModel implements Parcelable{
     private String overview;
     @SimpleSQLColumn(value = "col_voteAverage")
     private String voteAverage;
-    @SimpleSQLColumn(value = "col_isFav")
-    private int isFav;
 
     //Setter and Getter For Variables *************************
-    public int getIsFav() {
-        return isFav;
-    }
 
     public String getVoteAverage() {
         return voteAverage;
@@ -89,21 +84,17 @@ public class MovieModel implements Parcelable{
         this.voteAverage = voteAverage;
     }
 
-    public void setIsFav(int isFav) {
-        this.isFav = isFav;
-    }
     //******************************************************************
 
     public MovieModel(){};
 
-    public MovieModel(String movieId, String title, String releaseDate, String voteAverage, String overview, String posterPath, int isFav){
+    public MovieModel(String movieId, String title, String releaseDate, String voteAverage, String overview, String posterPath){
         this.movieId = movieId;
         this.title = title;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
         this.overview = overview;
         this.posterPath = posterPath;
-        this.isFav = isFav;
     }
 
     protected MovieModel(Parcel in) {
@@ -114,7 +105,6 @@ public class MovieModel implements Parcelable{
         releaseDate = in.readString();
         overview = in.readString();
         voteAverage = in.readString();
-        isFav = in.readInt();
     }
 
     public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
@@ -143,6 +133,5 @@ public class MovieModel implements Parcelable{
         dest.writeString(releaseDate);
         dest.writeString(overview);
         dest.writeString(voteAverage);
-        dest.writeInt(isFav);
     }
 }

@@ -1,7 +1,9 @@
 package com.example.mohamedhefny.popularmovie_new_tray;
 
+import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.example.mohamedhefny.popularmovie_new_tray.Adapters.MoviesAdapter;
 import com.example.mohamedhefny.popularmovie_new_tray.Model.MovieModel;
@@ -81,7 +84,9 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onStart() {
         super.onStart();
-        updateData(PopularMoveisURL);
+        if(isNetworkConnected()) {
+            updateData(PopularMoveisURL);
+        }
     }
 
     @Override
@@ -122,6 +127,11 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
         FetchMoviesData fetchMoviesData = new FetchMoviesData();
         fetchMoviesData.execute(DataURL);
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     //************************************************************************************************************************//
@@ -192,7 +202,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
                     for (int i = 0 ; i < jsonArray.length() ; i++){
                         JSONObject movieJSON = (JSONObject) jsonArray.get(i);
                         if(movieJSON.getString("poster_path") != null){
-                            movies.add(new MovieModel( movieJSON.getString("id") , movieJSON.getString("original_title") , movieJSON.getString("release_date") , movieJSON.getString("vote_average") , movieJSON.getString("overview") , movieJSON.getString("poster_path") , 0 ));
+                            movies.add(new MovieModel( movieJSON.getString("id") , movieJSON.getString("original_title") , movieJSON.getString("release_date") , movieJSON.getString("vote_average") , movieJSON.getString("overview") , movieJSON.getString("poster_path")));
                         }
                     }
                 }catch (JSONException JsonEx){}

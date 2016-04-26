@@ -1,6 +1,10 @@
 package com.example.mohamedhefny.popularmovie_new_tray;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.telecom.Connection;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,7 +109,6 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         release_date = (TextView) rootView.findViewById(R.id.release_date);
         average_vote = (TextView) rootView.findViewById(R.id.average_vote);
         overview = (TextView) rootView.findViewById(R.id.overview);
-        //trailerTitle = (TextView) rootView.findViewById(R.id.trailerTitle);
 
         posterImage = (ImageView) rootView.findViewById(R.id.posterImage);
 
@@ -144,17 +148,15 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
     public void onStart() {
         super.onStart();
         movieModel = getArguments().getParcelable("movieModel");
-        if(movieModel.getIsFav() == 0){
-            posterPath = MoviesAdapter.posterURL + movieModel.getPosterPath();
-            Picasso.with(getActivity()).load(posterPath).fit().into(posterImage);
-        }else if (movieModel.getIsFav() == 1){}
+        posterPath = MoviesAdapter.posterURL + movieModel.getPosterPath();
+        Picasso.with(getActivity()).load(posterPath).fit().into(posterImage);
 
         posterTitle.setText(movieModel.getTitle());
-        release_date.append(" " +movieModel.getReleaseDate());
-        average_vote.append(" " + movieModel.getVoteAverage() + " / 10");
+        release_date.setText("Released On : " + movieModel.getReleaseDate());
+        average_vote.setText("Vote Avrage : " + movieModel.getVoteAverage() + " / 10");
         overview.setText(movieModel.getOverview());
 
-        if (movieModel != null) {
+        if (movieModel != null && isNetworkConnected()) {
             new FetchTrailersData().execute(movieModel.getMovieId());
             new FetchReviewsData().execute(movieModel.getMovieId());
         }
@@ -162,14 +164,30 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if(movieModel.getIsFav() == 0){
-            Toast.makeText(getContext(),"Movie Add To Favorite",Toast.LENGTH_SHORT).show();
-            movieModel.setIsFav(1);
-            favoriteBtn.setClickable(false);
-            MovieModel mov = new MovieModel();
-            getActivity().getContentResolver().insert(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(mov,false));
+        Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
+        List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
+
+        //Check if the movieId in DataBase or not
+        byte i;
+        String mmMovieId = "";
+        for(i=0; i < MoviesRows.size(); i++){
+            if (movieModel.getMovieId().equals(MoviesRows.get(i).getMovieId())){
+                mmMovieId = movieModel.getMovieId();
+                break;
+            }
         }
-        else {}
+
+        if(mmMovieId == ""  /* the variable not change and This movie is not in the DataBase */) {
+            getActivity().getContentResolver().insert(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(movieModel,false));
+            favoriteBtn.setTextColor(Color.RED);
+            Toast.makeText(getContext(),"Movie Add to Favorite",Toast.LENGTH_SHORT).show();
+        }else{
+            //The variable is change and the movie is already in the DataBase and the user neet to delete it
+
+            //getActivity().getContentResolver().delete(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(movieModel,false));
+            favoriteBtn.setTextColor(Color.BLACK);
+            Toast.makeText(getContext(), "Movie Deleted from Favorite", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private Intent createShareMovieIntent() {
@@ -178,6 +196,11 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, movieModel.getTitle() + " " + "http://www.youtube.com/watch?v=" + trailerModel.getKey());
         return shareIntent;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     //************************************************************************************************************************//
