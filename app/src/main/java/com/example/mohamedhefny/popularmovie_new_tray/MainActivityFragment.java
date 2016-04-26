@@ -47,6 +47,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     //Final MovieModel URL
     String PopularMoveisURL ;
     String TopRatedMoviesURL ;
+    String FavoriteSort = "" ;
 
     GridView gridView;
     String sortMode;
@@ -85,7 +86,16 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public void onStart() {
         super.onStart();
         if(isNetworkConnected()) {
-            updateData(PopularMoveisURL);
+            if(FavoriteSort.equals("Favorite")){
+                FetchFavoriteMovies fetchFavoriteMoviesTask = new FetchFavoriteMovies();
+                fetchFavoriteMoviesTask.execute();
+            }
+            else {
+                updateData(PopularMoveisURL);
+            }
+        }else { //If the Internet not connected
+            FetchFavoriteMovies fetchFavoriteMovies = new FetchFavoriteMovies();
+            fetchFavoriteMovies.execute();
         }
     }
 
@@ -93,25 +103,16 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.action_popular_sort) {
+            FavoriteSort = "Popular";
             updateData(PopularMoveisURL);
         }
         else if(id == R.id.action_top_sort) {
+            FavoriteSort = "Top Rated";
             updateData(TopRatedMoviesURL);
         }
         else if(id == R.id.action_favorites){
-            Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
-            List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
-
-            MoviesAdapter adapter = new MoviesAdapter(getActivity() , MoviesRows);
-
-            if(MoviesRows != null){
-                if(adapter.isEmpty()){
-                    gridView.setAdapter(adapter);
-                }else {
-                    gridView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
-            }
+            FavoriteSort = "Favorite";
+            updateData(FavoriteSort);
         }
 
         return super.onOptionsItemSelected(item);
@@ -124,9 +125,13 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     }
 
     void updateData(String DataURL){
-        FetchMoviesData fetchMoviesData = new FetchMoviesData();
-        fetchMoviesData.execute(DataURL);
-
+        if(DataURL.equals("Favorite")){
+            FetchFavoriteMovies fetchFavoriteMovies = new FetchFavoriteMovies();
+            fetchFavoriteMovies.execute();
+        }else {
+            FetchMoviesData fetchMoviesData = new FetchMoviesData();
+            fetchMoviesData.execute(DataURL);
+        }
     }
 
     private boolean isNetworkConnected() {
@@ -216,6 +221,31 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
             MoviesAdapter adapter = new MoviesAdapter(getActivity() , movieModels);
 
             if(movieModels != null){
+                if(adapter.isEmpty()){
+                    gridView.setAdapter(adapter);
+                }else {
+                    gridView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+    //************************************************************************************************************************//
+
+    public class FetchFavoriteMovies extends AsyncTask<Void, Void, List<MovieModel>> {
+        @Override
+        protected List<MovieModel> doInBackground(Void... params) {
+            Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
+            List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
+            return MoviesRows;
+        }
+
+        @Override
+        protected void onPostExecute(List<MovieModel> MoviesRows) {
+            super.onPostExecute(MoviesRows);
+            MoviesAdapter adapter = new MoviesAdapter(getActivity() , MoviesRows);
+
+            if(MoviesRows != null){
                 if(adapter.isEmpty()){
                     gridView.setAdapter(adapter);
                 }else {
