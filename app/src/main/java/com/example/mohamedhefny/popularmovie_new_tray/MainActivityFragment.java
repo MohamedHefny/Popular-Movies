@@ -94,6 +94,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
                 updateData(PopularMoveisURL);
             }
         }else { //If the Internet not connected
+            Toast.makeText(getContext(), "No Internet Connection this is your Favorite Movies", Toast.LENGTH_SHORT).show();
             FetchFavoriteMovies fetchFavoriteMovies = new FetchFavoriteMovies();
             fetchFavoriteMovies.execute();
         }
