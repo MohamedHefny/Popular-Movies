@@ -70,6 +70,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+        //Put Your API Key in The string File
 
         //Popular MovieModel URL Build
         Uri popularMoviesURL = Uri.parse(movies_URL).buildUpon().appendPath(sort_Popular)

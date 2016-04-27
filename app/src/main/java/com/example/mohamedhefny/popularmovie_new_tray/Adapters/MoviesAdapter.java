@@ -64,11 +64,8 @@ public class MoviesAdapter extends BaseAdapter {
         }
 
         MovieModel movieModel = getItem(position);
-        if(true /* Check for poster (Online Or Offline) */){
             String posterPath = posterURL + movieModel.getPosterPath();
-            Picasso.with(context).load(posterPath).into(holder.posterImageView);
-        }else {
-        }
+            Picasso.with(context).load(posterPath).error(R.mipmap.ic_launcher).into(holder.posterImageView);
 
         return convertView;
     }
