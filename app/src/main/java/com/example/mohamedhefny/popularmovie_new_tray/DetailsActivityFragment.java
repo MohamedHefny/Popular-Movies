@@ -170,7 +170,8 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
         movieInFavoriteCheck();
 
         if(mmMovieId == ""  /* the variable not change and This movie is not in the DataBase */) {
-            //If you found any error her please run the app in the first time to creat the table
+
+            //If you found any error her in the first time please run the app to create the table in the first time
             getActivity().getContentResolver().insert(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(movieModel,false));
             favoriteBtn.setTextColor(Color.RED);
             Toast.makeText(getContext(),"Movie Add to Favorite",Toast.LENGTH_SHORT).show();

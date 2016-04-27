@@ -240,6 +240,8 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public class FetchFavoriteMovies extends AsyncTask<Void, Void, List<MovieModel>> {
         @Override
         protected List<MovieModel> doInBackground(Void... params) {
+
+            //If you found any error her in the first time please run the app to create the table in the first time
             Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
             List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
             cursor.close();
