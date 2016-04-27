@@ -51,14 +51,11 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.mohamedhefny.popularmovie_new_tray.Model.*;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class DetailsActivityFragment extends Fragment implements View.OnClickListener {
 
     private MovieModel movieModel;
     private TrailerModel trailerModel;
-    private ReviewModel reviewModel;
+    //private ReviewModel reviewModel;
 
     private Toolbar toolbar;
 
@@ -82,6 +79,8 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
     private ShareActionProvider mShareActionProvider;
 
     private Button favoriteBtn;
+
+    String mmMovieId = "";
 
     public DetailsActivityFragment() {}
 
@@ -136,6 +135,10 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
 
         favoriteBtn = (Button) rootView.findViewById(R.id.favoriteBtn);
         favoriteBtn.setOnClickListener(this);
+        movieInFavoriteCheck();
+        if(mmMovieId != ""  /* the variable not change and This movie is not in the DataBase */) {
+            favoriteBtn.setTextColor(Color.RED);
+        }
 
         if(toolbar != null){
             //Do this In One Pane Mode
@@ -164,29 +167,15 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
-        List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
-
-        //Check if the movieId in DataBase or not
-        byte i;
-        String mmMovieId = "";
-        for(i=0; i < MoviesRows.size(); i++){
-            if (movieModel.getMovieId().equals(MoviesRows.get(i).getMovieId())){
-                mmMovieId = movieModel.getMovieId();
-                break;
-            }
-        }
+        movieInFavoriteCheck();
 
         if(mmMovieId == ""  /* the variable not change and This movie is not in the DataBase */) {
             getActivity().getContentResolver().insert(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(movieModel,false));
             favoriteBtn.setTextColor(Color.RED);
             Toast.makeText(getContext(),"Movie Add to Favorite",Toast.LENGTH_SHORT).show();
         }else{
-            //The variable is change and the movie is already in the DataBase and the user neet to delete it
-
-            //getActivity().getContentResolver().delete(MoviesTableTable.CONTENT_URI,MoviesTableTable.getContentValues(movieModel,false));
-            favoriteBtn.setTextColor(Color.BLACK);
-            Toast.makeText(getContext(), "Movie Deleted from Favorite", Toast.LENGTH_SHORT).show();
+            //The variable is change and the movie is already in the DataBase
+            Toast.makeText(getContext(), "This Movie is already in your Favorites", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -201,6 +190,21 @@ public class DetailsActivityFragment extends Fragment implements View.OnClickLis
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    private void movieInFavoriteCheck(){
+        Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
+        List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
+
+        //Check if the movieId in DataBase or not
+        short i;
+        for(i=0; i < MoviesRows.size(); i++){
+            if (movieModel.getMovieId().equals(MoviesRows.get(i).getMovieId())){
+                mmMovieId = movieModel.getMovieId();
+                cursor.close();
+                break;
+            }
+        }
     }
 
     //************************************************************************************************************************//

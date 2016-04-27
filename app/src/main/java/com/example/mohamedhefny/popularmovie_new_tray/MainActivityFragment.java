@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +51,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     String FavoriteSort = "" ;
 
     GridView gridView;
-    String sortMode;
+    MoviesAdapter adapter;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -94,7 +95,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
                 updateData(PopularMoveisURL);
             }
         }else { //If the Internet not connected
-            Toast.makeText(getContext(), "No Internet Connection this is your Favorite Movies", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No Internet Connection and this is your Favorite Movies", Toast.LENGTH_SHORT).show();
             FetchFavoriteMovies fetchFavoriteMovies = new FetchFavoriteMovies();
             fetchFavoriteMovies.execute();
         }
@@ -104,12 +105,12 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.action_popular_sort) {
-            FavoriteSort = "Popular";
             updateData(PopularMoveisURL);
+            FavoriteSort = "Popular";
         }
         else if(id == R.id.action_top_sort) {
-            FavoriteSort = "Top Rated";
             updateData(TopRatedMoviesURL);
+            FavoriteSort = "Top Rated";
         }
         else if(id == R.id.action_favorites){
             FavoriteSort = "Favorite";
@@ -183,7 +184,9 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
                 moviesJSONData = buffer.toString();
 
             }catch (IOException ex){
-                ex.printStackTrace();
+                //ex.printStackTrace();
+                Log.e("Error FetchMovieData",""+ex);
+                return null;
             }finally {
                 //Check and Disconnect the Internet Connection
                 if(urlConnection != null){urlConnection.disconnect();}
@@ -219,7 +222,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
         @Override
         protected void onPostExecute(List<MovieModel> movieModels) {
             super.onPostExecute(movieModels);
-            MoviesAdapter adapter = new MoviesAdapter(getActivity() , movieModels);
+            adapter = new MoviesAdapter(getActivity() , movieModels);
 
             if(movieModels != null){
                 if(adapter.isEmpty()){
@@ -238,13 +241,14 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
         protected List<MovieModel> doInBackground(Void... params) {
             Cursor cursor = getActivity().getContentResolver().query(MoviesTableTable.CONTENT_URI,null,null,null,null);
             List<MovieModel> MoviesRows = MoviesTableTable.getRows(cursor,false);
+            cursor.close();
             return MoviesRows;
         }
 
         @Override
         protected void onPostExecute(List<MovieModel> MoviesRows) {
             super.onPostExecute(MoviesRows);
-            MoviesAdapter adapter = new MoviesAdapter(getActivity() , MoviesRows);
+            adapter = new MoviesAdapter(getActivity() , MoviesRows);
 
             if(MoviesRows != null){
                 if(adapter.isEmpty()){
